@@ -1,0 +1,16 @@
+
+render:
+  - samples: 200
+  - resolution_percentage: 100
+  - export_path: "export/"
+
+time:
+  - interpolate: False
+  - time_start: 0
+  - time_end: 525
+
+objects:
+  - name: "Coutour1"
+    path: "tXXXXXXX/coutour1.ply"
+    shade_smooth: true
+
