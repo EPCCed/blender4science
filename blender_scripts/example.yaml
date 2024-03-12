@@ -1,16 +1,16 @@
 
 render:
-  - samples: 200
-  - resolution_percentage: 100
-  - export_path: "export/"
+  samples: 40
+  resolution_percentage: 100
+  export_path: "export_blender/"
 
 time:
-  - interpolate: False
-  - time_start: 0
-  - time_end: 525
+  interpolate: False
+  time_start: 0
+  time_end: 525
 
 objects:
-  - name: "Coutour1"
-    path: "tXXXXXXX/coutour1.ply"
+  - name: "Contour1"
+    path: "tXXXXXXXX/Contour1.ply"
     shade_smooth: true
 
