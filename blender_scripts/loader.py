@@ -1,11 +1,13 @@
 
 import bpy
 import os
+import sys
 import argparse
-import yaml
 import re
 from pathlib import Path
 
+sys.path.insert(0, "/opt/cray/pe/python/3.9.13.1/lib/python3.9/site-packages/")
+import yaml
 
 
 def get_time(frame):
@@ -30,7 +32,7 @@ def get_data_path(template_path, time):
     path = template_path.replace(time_string_size*"X", "{0:0{1}}".format(time, time_string_size))
 
     if DATA_PATH:
-        return os.join(DATA_PATH, path)
+        return os.path.join(DATA_PATH, path)
     else:
         return path
 
@@ -45,7 +47,9 @@ def load_data(frame):
         original_object = bpy.data.objects[object['name']]
         path = get_data_path(object['path'], time)
 
-        imported_object = bpy.ops.wm.ply_import(filepath=path)
+        print(path)
+        bpy.ops.wm.ply_import(filepath=path)
+        imported_object = bpy.context.object
 
         if object['shade_smooth']:
             for f in imported_object.data.polygons:
@@ -74,13 +78,13 @@ def set_render_options():
         Set render options from the config file
     """
     if config['render']['samples']:
-        Scene.cycles.max_samples = config['render']['samples']
+        Scene.cycles.samples = config['render']['samples']
 
-    if config['render']['device']:
-        Scene.cycles.device = config['render']['device']
+    #if config['render']['device']:
+    #    Scene.cycles.device = config['render']['device']
 
     if config['render']['resolution_percentage']:
-        Scene.cycles.render.resolution_percentage = config['render']['resolution_percentage']
+        Scene.render.resolution_percentage = config['render']['resolution_percentage']
 
 
 def get_export_path(frame):
@@ -116,27 +120,28 @@ def render(frame):
 Scene = bpy.data.scenes[0]
 
 # Parse command line arguments
-parser = argparse.ArgumentParser()
-parser.add_argument("configfile", help="Render configuration file")
-parser.add_argument("--datapath", help="Path to the solution data")
-parser.add_argument("--renderpath", help="Path to export the renders")
-parser.add_argument("--frames", help="Set of frames to render in format '1-25'")
+# parser = argparse.ArgumentParser()
+# parser.add_argument("configfile", help="Render configuration file")
+# parser.add_argument("--datapath", help="Path to the solution data")
+# parser.add_argument("--renderpath", help="Path to export the renders")
+# parser.add_argument("--frames", help="Set of frames to render in format '1-25'")
+# 
+# args = parser.parse_args()
 
-args = parser.parse_args()
-
-
-config_file = args.configfile
+config_file = "example.yaml"
 
 with open(config_file, 'r') as yaml_file:
     config = yaml.safe_load(yaml_file)
 
-EXPORT_PATH = args.exportpath
-DATA_PATH = args.datapath
+print(config)
+
+EXPORT_PATH = "blender_export"
+DATA_PATH = "qcrit_export"
 
 
-if args.frames:
-    FRAME_START = args.frames.split("-")[0]
-    FRAME_END = args.frames.split("-")[1]
+if True:
+    FRAME_START = 0
+    FRAME_END = 525
 else:
     FRAME_START = Scene.frame_start
     FRAME_END = Scene.frame_end
@@ -146,11 +151,12 @@ else:
 for frame in range(FRAME_START, FRAME_END+1):
     export_path = get_export_path(frame)
     # Check if render has already been done
-    if os.path.exists(export_path):
+    if os.path.exists(export_path) or os.path.exists(export_path + ".tmp"):
         continue
 
     # Create empty file
-    with open(export_path, 'w') as fp:
+    with open(export_path+".tmp", 'w') as fp:
         pass
 
     render(frame)
+    os.remove(export_path+".tmp")
