@@ -13,4 +13,5 @@ objects:
   - name: "Contour1"
     path: "tXXXXXXXX/Contour1.ply"
     shade_smooth: true
+    enable: true
 
