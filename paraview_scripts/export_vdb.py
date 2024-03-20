@@ -6,11 +6,30 @@ import sys
 from pathlib import Path
 
 def get_filename(export_path, step, format):
+    """
+    get_filename outputs updated filename based on timestep.
+
+    :param export_path: directory for the output files 
+    :param step: index of the timestep
+    :param format: file extension for the output
+    """ 
     filename = "{}/t{:08}.{}".format(export_path, step,format)
     return(filename)
     
 
 def update_file(filename, export_path, samplingBounds, samplingDimensions, cellSizes, **kwargs):
+    """
+    update_file reads in the xmf input file, implements a sampling filter and then outputs the 
+    resultant data in the default openvdb format. It outputs a different file for each timestep.
+
+    :param filename: path for the input xmf file  
+    :param export_path: directory for the output files 
+    :param samplingBounds: list of max and min bounds in each dimensions for paraview in format: [xmax, xmin, ymax, ymin, zmax, zmin]. 
+        This can be null in which case paraview will set default ones.
+    :param samplingDimensions: list of image dimensions for paraview in format: [x_dim, y_dim, z_dim]. 
+        This can be null but then cellSizes will need to be populated
+    :param cellSizes: list of cell sizes in all dimensions for paraview in format: [x, y, z]
+    """ 
     # create a new 'XDMF Reader'
     xmf_reader = XDMFReader(FileNames=[filename]) 
     
@@ -64,11 +83,13 @@ def update_file(filename, export_path, samplingBounds, samplingDimensions, cellS
 
         save_data(output_filename, resampleToImage1)
 
-"""
-save data in vdb format 
-"""
 def save_data(output_name, resampleToImage1):
+    """
+    save_data saves the output of the resampleToImage1 filter to a file.
 
+    :param output_name: path for the output file
+    :param resampleToImage1: paraview filter object
+    """
     array_vals = resampleToImage1.PointData.keys()
     cell_vals= resampleToImage1.CellData.keys() 
     SaveData(output_name, proxy=resampleToImage1,
