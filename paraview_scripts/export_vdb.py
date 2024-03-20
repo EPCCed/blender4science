@@ -1,7 +1,8 @@
 #### import the simple module from the paraview
 from paraview.simple import *
 import argparse
-import os 
+import os
+import sys 
 from pathlib import Path
 
 def get_filename(export_path, step, format):
@@ -25,12 +26,15 @@ def update_file(filename, export_path, samplingBounds, samplingDimensions, cellS
         resampleToImage1.UseInputBounds = 0
         resampleToImage1.SamplingBounds = samplingBounds 
     else: 
-        resampleToImage1.UseInputBounds = 1
+        resampleToImage1.UseInputBounds = 1 # use paraview's default sampling bounds 
 
         # obtain samplingDimensions from cell sizes or directly from arguments
         if(samplingDimensions==None):
-            for i in len(cellSizes):
-                samplingDimensions[i] = abs(resampleToImage1.SamplingBounds[i+1] - resampleToImage1.SamplingBounds[i])/cellSizes[i]
+            if(cellSizes!=None):
+                for i in len(cellSizes):
+                    samplingDimensions[i] = abs(resampleToImage1.SamplingBounds[i+1] - resampleToImage1.SamplingBounds[i])/cellSizes[i]
+            else:
+                sys.exit("Need either cell sizes or sampling dimensions. Both can't be empty.")
         else:
             resampleToImage1.SamplingDimensions = samplingDimensions 
 
@@ -75,8 +79,8 @@ if __name__ == '__main__':
     parser.add_argument("--exportpath", default="paraview_export", help="Path to export vdb files")
     args = parser.parse_args()
 
-    samplingBounds = [] 
-    samplingDimensions = [] 
+    samplingBounds = None
+    samplingDimensions = None
     cellSizes = [100,100,100]
      
     update_file(args.datapath, args.exportpath, samplingBounds, samplingDimensions, cellSizes)
