@@ -13,8 +13,8 @@ def update_file(filename, export_path, **kwargs):
     # create a new 'XDMF Reader'
     xmf_reader = XDMFReader(FileNames=[filename]) 
     
-    # read cell array status 
-    xmf_reader.CellArrayStatus = xmf_reader.CellData.keys()
+    # # read cell array status 
+    # xmf_reader.CellArrayStatus = xmf_reader.CellData.keys()
 
     # create index list of timesteps to be used
     animationScene1 = GetAnimationScene()
@@ -22,72 +22,52 @@ def update_file(filename, export_path, **kwargs):
 
     # create a new 'Resample To Image' with sampling bounds and dimensions 
     resampleToImage1 = ResampleToImage(registrationName='ResampleToImage1', Input=xmf_reader)
-    resampleToImage1.SamplingBounds = [kwargs["xmin"], kwargs["xmax"], kwargs["ymin"], kwargs["ymax"], kwargs["zmin"], kwargs["zmax"]] 
 
-    resampleToImage1.UseInputBounds = 0
-    resampleToImage1.SamplingDimensions = [kwargs["xdim"], kwargs["ydim"], kwargs["zdim"]]
+    format="vdb"
+    # dynamic selection of input bounds 
+    if(kwargs!=None):
+        
+        resampleToImage1.UseInputBounds = 0
+        resampleToImage1.SamplingBounds = [kwargs["xmin"], kwargs["xmax"], kwargs["ymin"], kwargs["ymax"], kwargs["zmin"], kwargs["zmax"]] 
+        resampleToImage1.SamplingDimensions = [kwargs["xdim"], kwargs["ydim"], kwargs["zdim"]]
+    else: 
+        resampleToImage1.UseInputBounds = 1
 
     # update timeline for the first timestep onwards 
     UpdatePipeline(time=timestep_list[0], proxy=resampleToImage1) 
 
+    output_filename=f'{os.getcwd()}/test.vdb'
     # iterate over timesteps and save each one in different directory marked by an index
     for step, time in enumerate(timestep_list):
+        
 
-        # make folder for the index 
-        filename = get_filename(export_path, step, format="vdb")
-        print(filename)
-        if os.path.exists(filename):
-            continue
+        output_filename = get_filename(export_path, step,format)
+        if os.path.isfile(output_filename):
+            continue 
+
+        if os.path.isdir(output_filename):
+            print(f"Error, {output_filename} can't be a directory.") 
+            continue  
 
         print("  - Export timestep {}/{} ({})".format(step, len(timestep_list), time))
 
-        Path(filename).mkdir(parents=True, exist_ok=True)
-        exit() 
-
         # set time for that animation
         animationScene1.AnimationTime = time 
-        
-        # # set active source
-        SetActiveSource(xmf_reader)
 
-        # # set active source
-        SetActiveSource(resampleToImage1)
-
-        # save data
-        output_name = filename + "/output.vdb"
-        # get properties for writing 
-        renderView = FindViewOrCreate('RenderView1', viewtype='RenderView')
-        for name, source in GetSources().items():
-            displayProp = GetDisplayProperties(source,view=renderView)
-            if(displayProp.Visibility==1):
-                save_data(output_name, resampleToImage1,displayProp)
+        save_data(output_filename, resampleToImage1)
 
 """
 save data in vdb format 
 """
-def save_data(output_name, resampleToImage1, displayProp):
+def save_data(output_name, resampleToImage1):
 
-    export_args = {}
-    if displayProp.ColorArrayName[0] == "POINTS":
-        export_args = {'PointDataArrays': [displayProp.ColorArrayName[1]]}
-    elif displayProp.ColorArrayName[0] == "CELLS":
-        export_args = {'CellDataArrays': [displayProp.ColorArrayName[1]]}
-    if displayProp.ColorArrayName[1] == '':
-        print("      Skipping {}".format(filename))
-        return
-
-    # generated data 
-    # SaveData(output_name, proxy=resampleToImage1,
-    #     ColorArrayName=['POINTS', ''],
-    #     LookupTable=None,
-    #     PointDataArrays=['enstrophy', 'kinetic energy', 'pressure', 'velocity', 'vtkGhostType', 'vtkValidPointMask'],
-    #     CellDataArrays=['vtkGhostType'])
-
-    # similar to export ply 
+    array_vals = resampleToImage1.PointData.keys()
+    cell_vals= resampleToImage1.CellData.keys() 
     SaveData(output_name, proxy=resampleToImage1,
-        ColorArrayName=list(displayProp.ColorArrayName),
-        LookupTable=displayProp.LookupTable, **export_args)
-    exit() 
+             LookupTable=None, 
+             PointDataArrays=array_vals,
+             CellDataArrays=cell_vals
+    ) 
 
 if __name__ == '__main__':
 
