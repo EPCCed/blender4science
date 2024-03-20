@@ -9,7 +9,7 @@ def get_filename(export_path, step, format):
     return(filename)
     
 
-def update_file(filename, export_path, **kwargs):
+def update_file(filename, export_path, samplingBounds, samplingDimensions, cellSizes):
     # create a new 'XDMF Reader'
     xmf_reader = XDMFReader(FileNames=[filename]) 
     
@@ -21,14 +21,18 @@ def update_file(filename, export_path, **kwargs):
     resampleToImage1 = ResampleToImage(registrationName='ResampleToImage1', Input=xmf_reader)
 
     format="vdb"
-    # dynamic selection of input bounds 
-    if(kwargs!=None):
-        
+    if(samplingBounds!=None):
         resampleToImage1.UseInputBounds = 0
-        resampleToImage1.SamplingBounds = [kwargs["xmin"], kwargs["xmax"], kwargs["ymin"], kwargs["ymax"], kwargs["zmin"], kwargs["zmax"]] 
-        resampleToImage1.SamplingDimensions = [kwargs["xdim"], kwargs["ydim"], kwargs["zdim"]]
+        resampleToImage1.SamplingBounds = samplingBounds 
     else: 
         resampleToImage1.UseInputBounds = 1
+
+        # obtain samplingDimensions from cell sizes or directly from arguments
+        if(samplingDimensions==None):
+            for i in len(cellSizes):
+                samplingDimensions[i] = abs(resampleToImage1.SamplingBounds[i+1] - resampleToImage1.SamplingBounds[i])/cellSizes[i]
+        else:
+            resampleToImage1.SamplingDimensions = samplingDimensions 
 
     # update timeline for the first timestep onwards 
     UpdatePipeline(time=timestep_list[0], proxy=resampleToImage1) 
@@ -67,27 +71,12 @@ def save_data(output_name, resampleToImage1):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--datapath", help="Path to the solution data")
+    parser.add_argument("--datapath", required=True, help="Path to the solution data")
     parser.add_argument("--exportpath", default="paraview_export", help="Path to export vdb files")
     args = parser.parse_args()
 
-    if(args.datapath != None):
-        filename = args.datapath
-    else:
-        print("Error. Enter data path")
-        exit(1) 
-    outputdirname = args.exportpath
-
-    img_bounds= { 
-        "xmin":-0.15,
-        "xmax":0.7,
-        "ymin":-0.15,
-        "ymax":0.15,
-        "zmin":-0.15,
-        "zmax":0.15,
-        "xdim":100,
-        "ydim":100,
-        "zdim":100
-    }
-
-    update_file(filename, outputdirname, **img_bounds)
+    samplingBounds = [] 
+    samplingDimensions = [] 
+    cellSizes = [100,100,100]
+     
+    update_file(args.datapath, args.exportpath, samplingBounds, samplingDimensions, cellSizes)
