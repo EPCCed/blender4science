@@ -10,7 +10,7 @@ def get_filename(export_path, step, format):
     return(filename)
     
 
-def update_file(filename, export_path, samplingBounds, samplingDimensions, cellSizes):
+def update_file(filename, export_path, samplingBounds, samplingDimensions, cellSizes, **kwargs):
     # create a new 'XDMF Reader'
     xmf_reader = XDMFReader(FileNames=[filename]) 
     
@@ -21,7 +21,12 @@ def update_file(filename, export_path, samplingBounds, samplingDimensions, cellS
     # create a new 'Resample To Image' with sampling bounds and dimensions 
     resampleToImage1 = ResampleToImage(registrationName='ResampleToImage1', Input=xmf_reader)
 
+    # chose file extension for output.
     format="vdb"
+    if(kwargs):
+        if(kwargs["format"]!=None):
+            format=kwargs["format"]
+
     if(samplingBounds!=None):
         resampleToImage1.UseInputBounds = 0
         resampleToImage1.SamplingBounds = samplingBounds 
@@ -30,9 +35,10 @@ def update_file(filename, export_path, samplingBounds, samplingDimensions, cellS
 
         # obtain samplingDimensions from cell sizes or directly from arguments
         if(samplingDimensions==None):
+            samplingDimensions = [] 
             if(cellSizes!=None):
-                for i in len(cellSizes):
-                    samplingDimensions[i] = abs(resampleToImage1.SamplingBounds[i+1] - resampleToImage1.SamplingBounds[i])/cellSizes[i]
+                for i in range(len(cellSizes)):
+                    samplingDimensions.append(abs(resampleToImage1.SamplingBounds[i+1] - resampleToImage1.SamplingBounds[i])/cellSizes[i])
             else:
                 sys.exit("Need either cell sizes or sampling dimensions. Both can't be empty.")
         else:
@@ -49,8 +55,7 @@ def update_file(filename, export_path, samplingBounds, samplingDimensions, cellS
             continue 
 
         if os.path.isdir(output_filename):
-            print(f"Error, {output_filename} can't be a directory.") 
-            continue  
+            sys.exit(f"Error, {output_filename} can't be a directory.")
 
         print("  - Export timestep {}/{} ({})".format(step, len(timestep_list), time))
 
