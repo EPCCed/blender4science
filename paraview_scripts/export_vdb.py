@@ -13,9 +13,6 @@ def update_file(filename, export_path, **kwargs):
     # create a new 'XDMF Reader'
     xmf_reader = XDMFReader(FileNames=[filename]) 
     
-    # # read cell array status 
-    # xmf_reader.CellArrayStatus = xmf_reader.CellData.keys()
-
     # create index list of timesteps to be used
     animationScene1 = GetAnimationScene()
     timestep_list = animationScene1.TimeKeeper.TimestepValues
@@ -36,10 +33,8 @@ def update_file(filename, export_path, **kwargs):
     # update timeline for the first timestep onwards 
     UpdatePipeline(time=timestep_list[0], proxy=resampleToImage1) 
 
-    output_filename=f'{os.getcwd()}/test.vdb'
     # iterate over timesteps and save each one in different directory marked by an index
     for step, time in enumerate(timestep_list):
-        
 
         output_filename = get_filename(export_path, step,format)
         if os.path.isfile(output_filename):
