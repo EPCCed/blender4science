@@ -4,25 +4,24 @@ import argparse
 import os 
 from pathlib import Path
 
-def get_filename(export_path, step, name="", ext=""):
-    folder = "{}/t{:08}".format(export_path, step)
-    filename = os.path.join(folder, "{}.{}".format(name, ext))
-    return folder, filename
+def get_filename(export_path, step, format):
+    filename = "{}/t{:08}.{}".format(export_path, step,format)
+    return(filename)
+    
 
 def update_file(filename, export_path, **kwargs):
     # create a new 'XDMF Reader'
-    sandiasolxmf = XDMFReader(registrationName='Sandia.sol.xmf', FileNames=[filename])
+    xmf_reader = XDMFReader(FileNames=[filename]) 
     
     # read cell array status 
-    sandiasolxmf.CellArrayStatus = sandiasolxmf.CellData.keys()
+    xmf_reader.CellArrayStatus = xmf_reader.CellData.keys()
 
     # create index list of timesteps to be used
     animationScene1 = GetAnimationScene()
     timestep_list = animationScene1.TimeKeeper.TimestepValues
 
-
     # create a new 'Resample To Image' with sampling bounds and dimensions 
-    resampleToImage1 = ResampleToImage(registrationName='ResampleToImage1', Input=sandiasolxmf)
+    resampleToImage1 = ResampleToImage(registrationName='ResampleToImage1', Input=xmf_reader)
     resampleToImage1.SamplingBounds = [kwargs["xmin"], kwargs["xmax"], kwargs["ymin"], kwargs["ymax"], kwargs["zmin"], kwargs["zmax"]] 
 
     resampleToImage1.UseInputBounds = 0
@@ -35,25 +34,27 @@ def update_file(filename, export_path, **kwargs):
     for step, time in enumerate(timestep_list):
 
         # make folder for the index 
-        export_folder, _ = get_filename(export_path, step)
-        print(export_folder)
-        if os.path.exists(export_folder):
+        filename = get_filename(export_path, step, format="vdb")
+        print(filename)
+        if os.path.exists(filename):
             continue
+
         print("  - Export timestep {}/{} ({})".format(step, len(timestep_list), time))
 
-        Path(export_folder).mkdir(parents=True, exist_ok=True)
+        Path(filename).mkdir(parents=True, exist_ok=True)
+        exit() 
 
         # set time for that animation
         animationScene1.AnimationTime = time 
         
         # # set active source
-        SetActiveSource(sandiasolxmf)
+        SetActiveSource(xmf_reader)
 
         # # set active source
         SetActiveSource(resampleToImage1)
 
         # save data
-        output_name = export_folder + "/output.vdb"
+        output_name = filename + "/output.vdb"
         # get properties for writing 
         renderView = FindViewOrCreate('RenderView1', viewtype='RenderView')
         for name, source in GetSources().items():
