@@ -8,7 +8,7 @@ except ModuleNotFoundError:
     USE_YAML = False
 
 class SequenceDataPanel(bpy.types.Panel):
-    """Creates the sequence data loader panel in a 3d view tab"""
+    """Defines the sequence data loader panel in a 3d view tab"""
     bl_label = "Sequence Data Loader"
     bl_idname = "SEQ_DATA_LOADER_layout"
     bl_space_type = 'VIEW_3D'

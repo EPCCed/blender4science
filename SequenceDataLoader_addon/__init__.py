@@ -10,7 +10,6 @@ bl_info = {
     "author": "Sebastien Lemaire",
     "version": (0, 9, 0),
     "blender": (4, 0, 0),
-    "warning": "",
     "category": "Import"
 }
 
