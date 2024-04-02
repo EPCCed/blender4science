@@ -80,6 +80,7 @@ class SequenceDataPanel(bpy.types.Panel):
         
         row = layout.column()
         row.scale_y = 3.0
+        row.alert = (sequence_data.last_read_time != sequence_data.get_time(scene.frame_current))
         row.operator("sequencedata.load_objects", text="Load Current Frame")
 
         

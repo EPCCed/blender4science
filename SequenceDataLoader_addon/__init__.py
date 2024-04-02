@@ -16,7 +16,6 @@ bl_info = {
 
 
 def register():
-    bpy.app.handlers.frame_change_pre.append(load_object_on_frame_change)
     bpy.utils.register_class(SequenceDataWriteConfig)
     bpy.utils.register_class(SequenceDataReadConfig)
     bpy.utils.register_class(SequenceDataAddObject)
@@ -25,13 +24,12 @@ def register():
     
     bpy.utils.register_class(ObjectDataSequence)
     bpy.utils.register_class(SequenceDataLoader)
-    bpy.types.Scene.sequence_data = bpy.props.PointerProperty(type=SequenceDataLoader)    
+    bpy.types.Scene.sequence_data = bpy.props.PointerProperty(type=SequenceDataLoader)
     
     bpy.utils.register_class(SequenceDataPanel)
 
 
 def unregister():
-    bpy.app.handlers.frame_change_pre.remove(load_object_on_frame_change) 
     bpy.utils.unregister_class(SequenceDataWriteConfig)    
     bpy.utils.unregister_class(SequenceDataReadConfig)
     bpy.utils.unregister_class(SequenceDataAddObject)

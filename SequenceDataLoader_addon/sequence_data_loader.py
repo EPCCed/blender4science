@@ -8,10 +8,17 @@ except ModuleNotFoundError:
     USE_YAML = False
 
 
+def enable_live_update(self, context):
+    if context.scene.sequence_data.live_update:
+        bpy.app.handlers.frame_change_pre.append(load_object_on_frame_change)
+    else:
+        bpy.app.handlers.frame_change_pre.remove(load_object_on_frame_change)
+
+
 def load_object_on_frame_change(scene):
     """Load objects at current frame if `live_update` is enabled"""
-    if scene.sequence_data.live_update:
-        scene.sequence_data.load_objects(scene.frame_current)
+    #if scene.sequence_data.live_update:
+    scene.sequence_data.load_objects(scene.frame_current)
 
 
 class SequenceDataLoadObjects(bpy.types.Operator):
@@ -30,7 +37,8 @@ class SequenceDataAddObject(bpy.types.Operator):
     bl_label = "Add Object"
     
     def execute(self, context):
-        bpy.context.scene.sequence_data.objects.add()
+        context.scene.sequence_data.last_read_time = -1
+        context.scene.sequence_data.objects.add()
         return {"FINISHED"}
     
 
@@ -82,12 +90,13 @@ class SequenceDataLoader(bpy.types.PropertyGroup):
     """
     config_file: bpy.props.StringProperty(name="Config file", subtype = 'FILE_PATH')
     timing_interpolate: bpy.props.BoolProperty(name="Interpolate time")
-    live_update: bpy.props.BoolProperty(name="Live update")
+    live_update: bpy.props.BoolProperty(name="Live update", update=enable_live_update)
     timing_time_start: bpy.props.IntProperty(name="Start Time")
     timing_time_end: bpy.props.IntProperty(name="End Time")
     objects: bpy.props.CollectionProperty(type=ObjectDataSequence)
     export_path: bpy.props.StringProperty(name="Export path", subtype = 'DIR_PATH')
 
+    last_read_time: bpy.props.IntProperty(name="Last read time", default=-1)
     
     def get_time(self, frame):
         """
@@ -157,15 +166,21 @@ class SequenceDataLoader(bpy.types.PropertyGroup):
         Load every object in self.objects for the frame in parameter
         """
         time = self.get_time(frame)
+
+        if time == self.last_read_time:
+            return
         
         for object in self.objects:
             if (not object.enable) or \
                 (not bpy.data.objects[object.name].type == "MESH") or \
                 (not bpy.data.objects[object.name].mode == "OBJECT"):
                 continue
+
             
             path = self.get_path(bpy.path.abspath(object.path), time)
             self.load_object(object.name, object.shade_smooth, path)
+        
+        self.last_read_time = time
 
 
     def read_config(self):
