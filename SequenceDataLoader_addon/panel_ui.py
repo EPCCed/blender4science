@@ -14,23 +14,23 @@ class SequenceDataPanel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Sequence Data Loader"
-    
+
 
     def draw(self, context):
         layout = self.layout
-        
+
         #layout.use_property_split = True
         layout.use_property_decorate = False
 
         scene = context.scene
         sequence_data = scene.sequence_data
-        
+
         # Configuration
         layout.label(text="Configuration", icon="FILE")
         col = layout.column()
         col.prop(sequence_data, "config_file")
         col.enabled = USE_YAML
-        
+
         row = layout.row(align=True)
         row.operator("sequencedata.read_config", icon="IMPORT")
         row.enabled = USE_YAML
@@ -43,13 +43,13 @@ class SequenceDataPanel(bpy.types.Panel):
 
         col = layout.column()
         col.prop(sequence_data, "timing_interpolate")
-        
+
         row = layout.grid_flow(columns=2, align=True)
         row.prop(sequence_data, "timing_time_start")
         row.prop(sequence_data, "timing_time_end")
 
         row.prop(scene, "frame_start")
-        row.prop(scene, "frame_end")        
+        row.prop(scene, "frame_end")
 
         layout.separator(factor=2)
 
@@ -77,18 +77,18 @@ class SequenceDataPanel(bpy.types.Panel):
         row = layout.split(align=True)
         row.prop(sequence_data, "live_update")
         row.prop(scene, "frame_current")
-        
+
         row = layout.column()
         row.scale_y = 3.0
         row.alert = (sequence_data.last_read_time != sequence_data.get_time(scene.frame_current))
         row.operator("sequencedata.load_objects", text="Load Current Frame")
 
-        
+
         layout.separator(factor=2)
 
         # Render settings
         layout.label(text="Render settings", icon="RENDER_RESULT")
-        
+
         col = layout.column()
         col.prop(scene.cycles, "samples")
         col.prop(scene.render, "resolution_percentage")

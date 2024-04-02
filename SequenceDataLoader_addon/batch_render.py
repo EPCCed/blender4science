@@ -22,7 +22,7 @@ def get_export_path(frame=None):
         path = RENDER_PATH
     else:
         path = Scene.sequence_data.export_path
-    
+
     if frame:
         return os.path.join(path, "export_{:08}.png".format(frame))
     else:
@@ -50,8 +50,8 @@ def render(frame):
 
 
 # Parse command line arguments
-parser = argparse.ArgumentParser(description="""When called by a blender instance, renders a set of frames 
-                                 by first importing the corresponding sequence data objects. 
+parser = argparse.ArgumentParser(description="""When called by a blender instance, renders a set of frames
+                                 by first importing the corresponding sequence data objects.
                                  It also handles running multiple instances concurently by rendering each frame only once.""")
 parser.add_argument("--configfile", help="File to read the configuration from, if absent setting stored in the .blend file are used. Requires pyyaml lib installed inside blender.")
 parser.add_argument("--renderpath", help="Path where renders are to be exported, supresed the config file render/export_path parameter.")
