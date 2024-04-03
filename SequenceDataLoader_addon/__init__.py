@@ -25,7 +25,9 @@ def register():
 
     bpy.utils.register_class(ObjectDataSequence)
     bpy.utils.register_class(SequenceDataLoader)
+    bpy.utils.register_class(SequenceDataRender)
     bpy.types.Scene.sequence_data = bpy.props.PointerProperty(type=SequenceDataLoader)
+    bpy.types.Scene.sequence_data_render = bpy.props.PointerProperty(type=SequenceDataRender)
 
     bpy.utils.register_class(SequenceDataPanel)
 
@@ -37,6 +39,7 @@ def unregister():
     bpy.utils.unregister_class(SequenceDataRemoveObject)
     bpy.utils.unregister_class(SequenceDataLoadObjects)
 
+    bpy.utils.unregister_class(SequenceDataRender)
     bpy.utils.unregister_class(SequenceDataLoader)
     bpy.utils.unregister_class(ObjectDataSequence)
     bpy.utils.unregister_class(SequenceDataPanel)
