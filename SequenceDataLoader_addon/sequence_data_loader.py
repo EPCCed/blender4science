@@ -1,4 +1,5 @@
 import bpy
+import os
 import re
 
 USE_YAML = True
@@ -17,8 +18,8 @@ def enable_live_update(self, context):
 
 def load_object_on_frame_change(scene):
     """Load objects at current frame if `live_update` is enabled"""
-    #if scene.sequence_data.live_update:
-    scene.sequence_data.load_objects(scene.frame_current)
+    if scene.sequence_data.live_update:
+        scene.sequence_data.load_objects(scene.frame_current)
 
 
 class SequenceDataLoadObjects(bpy.types.Operator):
@@ -122,6 +123,20 @@ class SequenceDataLoader(bpy.types.PropertyGroup):
         time_string_size = len(re.search("X+", template_path).group())
         path = template_path.replace(time_string_size*"X", "{0:0{1}}".format(time, time_string_size))
         return path
+
+
+    def get_export_path(self, frame=None):
+        """
+        Returns the path where a frame is to be exported to
+
+        :param frame: frame number to get the path of
+        """
+
+        if frame:
+            return os.path.join(self.export_path, "export_{:08}.png".format(frame))
+        else:
+            return self.export_path
+
 
 
     def load_object(self, name, shade_smooth, path):

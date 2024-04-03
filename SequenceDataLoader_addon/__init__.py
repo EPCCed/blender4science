@@ -2,11 +2,12 @@
 import bpy
 from .sequence_data_loader import *
 from .panel_ui import *
+from .batch_render import *
 
 
 bl_info = {
     "name": "Sequence Data Loader",
-    "description": "Load a sequence of objects from .PLY files",
+    "description": "Load sequences of .ply files.",
     "author": "Sebastien Lemaire",
     "version": (0, 9, 0),
     "blender": (4, 0, 0),
