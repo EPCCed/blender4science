@@ -12,7 +12,7 @@ except ModuleNotFoundError:
 def enable_live_update(self, context):
     if context.scene.sequence_data.live_update:
         bpy.app.handlers.frame_change_pre.append(load_object_on_frame_change)
-    else:
+    elif load_object_on_frame_change in bpy.app.handlers.frame_change_pre:
         bpy.app.handlers.frame_change_pre.remove(load_object_on_frame_change)
 
 
@@ -99,6 +99,7 @@ class SequenceDataLoader(bpy.types.PropertyGroup):
 
     last_read_time: bpy.props.IntProperty(name="Last read time", default=-1)
 
+
     def get_time(self, frame):
         """
         Get timestep from frame. Timestep relates to the input data time while frame is a Blender concept
@@ -115,6 +116,7 @@ class SequenceDataLoader(bpy.types.PropertyGroup):
         time = max(time, self.timing_time_start)
         time = min(time, self.timing_time_end)
         return time
+
 
     def get_path(self, template_path, time):
         """
@@ -136,7 +138,6 @@ class SequenceDataLoader(bpy.types.PropertyGroup):
             return os.path.join(self.export_path, "export_{:08}.png".format(frame))
         else:
             return self.export_path
-
 
 
     def load_object(self, name, shade_smooth, path):

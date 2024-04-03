@@ -39,6 +39,8 @@ class SequenceDataRender(bpy.types.PropertyGroup):
         parser.add_argument("--frames", help="Range of frame to render, should be in format '1-17'. If absent, using the frame range inside the .blend file.")
 
         # Parse arguments after "--"
+        if not "--" in sys.argv:
+            return
         args = parser.parse_args(args=sys.argv[sys.argv.index("--") + 1:])
 
         if args.configfile:

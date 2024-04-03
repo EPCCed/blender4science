@@ -10,7 +10,7 @@ except ModuleNotFoundError:
 class SequenceDataPanel(bpy.types.Panel):
     """Defines the sequence data loader panel in a 3d view tab"""
     bl_label = "Sequence Data Loader"
-    bl_idname = "SEQ_DATA_LOADER_layout"
+    bl_idname = "VIEW_3D_PT_SequenceDataLoader"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Sequence Data Loader"
