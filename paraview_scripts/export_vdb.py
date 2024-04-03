@@ -17,7 +17,7 @@ def get_filename(export_path, step, format):
     return(filename)
     
 
-def update_file(filename, export_path, samplingBounds, samplingDimensions, cellSizes, **kwargs):
+def update_file(filename, export_path, samplingBounds, samplingDimensions, cellSize, **kwargs):
     """
     update_file reads in the xmf input file, implements a sampling filter and then outputs the 
     resultant data in the default openvdb format. It outputs a different file for each timestep.
@@ -28,7 +28,7 @@ def update_file(filename, export_path, samplingBounds, samplingDimensions, cellS
         This can be null in which case paraview will set default ones.
     :param samplingDimensions: list of image dimensions for paraview in format: [x_dim, y_dim, z_dim]. 
         This can be null but then cellSizes will need to be populated
-    :param cellSizes: list of cell sizes in all dimensions for paraview in format: [x, y, z]
+    :param cellSize: Cell size for all dimensions for paraview
     """ 
     # create a new 'XDMF Reader'
     xmf_reader = XDMFReader(FileNames=[filename]) 
@@ -54,9 +54,10 @@ def update_file(filename, export_path, samplingBounds, samplingDimensions, cellS
         # obtain samplingDimensions from cell sizes or directly from arguments
         if samplingDimensions == None:
             samplingDimensions = [] 
-            if cellSizes != None :
-                for i in range(len(cellSizes)):
-                    samplingDimensions.append(abs(resampleToImage1.SamplingBounds[i+1] - resampleToImage1.SamplingBounds[i])/cellSizes[i])
+            NDIM = 3 # number of dimensions by default 
+            if cellSize != None :
+                for i in range(NDIM):
+                    samplingDimensions.append(abs(resampleToImage1.InputBounds[2*i+1] - resampleToImage1.InputBounds[2*i])/cellSize)
             else:
                 raise Exception("Need either cell sizes or sampling dimensions. Both can't be empty.")
         else:
@@ -106,6 +107,6 @@ if __name__ == '__main__':
 
     samplingBounds = None
     samplingDimensions = None
-    cellSizes = [100,100,100]
+    cellSize = 0.5
      
-    update_file(args.datapath, args.exportpath, samplingBounds, samplingDimensions, cellSizes)
+    update_file(args.datapath, args.exportpath, samplingBounds, samplingDimensions, cellSize)
