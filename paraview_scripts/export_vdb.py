@@ -42,24 +42,23 @@ def update_file(filename, export_path, samplingBounds, samplingDimensions, cellS
 
     # chose file extension for output.
     format="vdb"
-    if(kwargs):
-        if(kwargs["format"]!=None):
+    if kwargs and ("format" in kwargs):
             format=kwargs["format"]
 
-    if(samplingBounds!=None):
+    if samplingBounds != None:
         resampleToImage1.UseInputBounds = 0
         resampleToImage1.SamplingBounds = samplingBounds 
     else: 
         resampleToImage1.UseInputBounds = 1 # use paraview's default sampling bounds 
 
         # obtain samplingDimensions from cell sizes or directly from arguments
-        if(samplingDimensions==None):
+        if samplingDimensions == None:
             samplingDimensions = [] 
-            if(cellSizes!=None):
+            if cellSizes != None :
                 for i in range(len(cellSizes)):
                     samplingDimensions.append(abs(resampleToImage1.SamplingBounds[i+1] - resampleToImage1.SamplingBounds[i])/cellSizes[i])
             else:
-                sys.exit("Need either cell sizes or sampling dimensions. Both can't be empty.")
+                raise Exception("Need either cell sizes or sampling dimensions. Both can't be empty.")
         else:
             resampleToImage1.SamplingDimensions = samplingDimensions 
 
@@ -74,7 +73,7 @@ def update_file(filename, export_path, samplingBounds, samplingDimensions, cellS
             continue 
 
         if os.path.isdir(output_filename):
-            sys.exit(f"Error, {output_filename} can't be a directory.")
+            raise Exception(f"Error, {output_filename} can't be a directory.")
 
         print("  - Export timestep {}/{} ({})".format(step, len(timestep_list), time))
 
