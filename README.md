@@ -1,5 +1,5 @@
 
-This repository contains a set of tools as well as a blender addon meant to ease the render of sequence data stored in separate (`.ply`) files. 
+This repository contains a set of tools including a blender addon meant to ease the render of sequences of data stored in separate (`.ply`) files. 
 
 
 # Blender addon

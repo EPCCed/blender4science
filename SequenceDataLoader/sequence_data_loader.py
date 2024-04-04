@@ -92,8 +92,8 @@ class SequenceDataLoader(bpy.types.PropertyGroup):
     config_file: bpy.props.StringProperty(name="Config file", subtype = 'FILE_PATH')
     timing_interpolate: bpy.props.BoolProperty(name="Interpolate time")
     live_update: bpy.props.BoolProperty(name="Live update", update=enable_live_update)
-    timing_time_start: bpy.props.IntProperty(name="Start Time")
-    timing_time_end: bpy.props.IntProperty(name="End Time")
+    timing_time_start: bpy.props.IntProperty(name="Start Time", description="First time index of Sequences.")
+    timing_time_end: bpy.props.IntProperty(name="End Time", description="Final time index of Sequences.")
     objects: bpy.props.CollectionProperty(type=ObjectDataSequence)
     export_path: bpy.props.StringProperty(name="Export path", subtype = 'DIR_PATH')
 
@@ -120,10 +120,15 @@ class SequenceDataLoader(bpy.types.PropertyGroup):
 
     def get_path(self, template_path, time):
         """
-        Get the path to the data file from a template stored in the config file. The template has XXXXX as a time placeholder
+        Get the path to the data file from a template string. If the template as `##` the sequence will use this pattern. 
+        Otherwise numbers in the path will be autodetected.
         """
-        time_string_size = len(re.search("X+", template_path).group())
-        path = template_path.replace(time_string_size*"X", "{0:0{1}}".format(time, time_string_size))
+        if "#" in template_path:
+            time_string_size = len(re.search("#+", template_path).group())
+            path = template_path.replace(time_string_size*"#", "{0:0{1}}".format(time, time_string_size))
+        else:
+            time_string_size = len(re.findall("[0-9][0-9]+", template_path)[-1])
+            path = re.sub(f"[0-9]{{{time_string_size}}}", "{0:0{1}}".format(time, time_string_size), template_path)
         return path
 
 
