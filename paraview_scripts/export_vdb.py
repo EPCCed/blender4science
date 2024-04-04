@@ -57,7 +57,7 @@ def update_file(filename, export_path, samplingBounds, samplingDimensions, cellS
         NDIM = 3 # number of dimensions by default 
         if cellSize != None :
             for i in range(NDIM):
-                samplingDimensions.append(int(abs(resampleToImage1.InputBounds[2*i+1] - resampleToImage1.InputBounds[2*i])/cellSize))
+                samplingDimensions.append(int(abs(resampleToImage1.SamplingBounds[2*i+1] - resampleToImage1.SamplingBounds[2*i])/cellSize))
         else:
             raise Exception("Need either cell sizes or sampling dimensions. Both can't be empty.")
     else:
