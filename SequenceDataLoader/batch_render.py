@@ -34,9 +34,9 @@ class SequenceDataRender(bpy.types.PropertyGroup):
         parser = argparse.ArgumentParser(description="""When called by a blender instance, renders a set of frames
                                         by first importing the corresponding sequence data objects.
                                         It also handles running multiple instances concurently by rendering each frame only once.""")
-        parser.add_argument("--configfile", help="File to read the configuration from, if absent setting stored in the .blend file are used. Requires pyyaml lib installed inside blender.")
-        parser.add_argument("--renderpath", help="Path where renders are to be exported, supresed the config file render/export_path parameter.")
-        parser.add_argument("--frames", help="Range of frame to render, should be in format '1-17'. If absent, using the frame range inside the .blend file.")
+        parser.add_argument("--config-file", help="File to read the configuration from, if absent setting stored in the .blend file are used. Requires pyyaml lib installed inside blender.")
+        parser.add_argument("--render-path", help="Path where renders are to be exported, supresed the config file render/export_path parameter.")
+        parser.add_argument("--frames", help="Range of frames to render, should be in format '1-17'. If absent, using the frame range inside the .blend file.")
 
         # Parse arguments after "--"
         if not "--" in sys.argv:
