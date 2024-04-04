@@ -108,5 +108,8 @@ if __name__ == '__main__':
     samplingBounds = None
     samplingDimensions = None
     cellSize = 0.5
-     
+
+    # create export directory if it doesn't exist
+    Path(args.exportpath).mkdir(parents=True, exist_ok=True) 
+
     update_file(args.datapath, args.exportpath, samplingBounds, samplingDimensions, cellSize)
