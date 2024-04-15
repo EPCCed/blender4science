@@ -21,11 +21,13 @@ This addon handles loading sequences of `.ply` files as well as providing some q
 This addon (optionally) requires pyyaml when using yaml configuration files. It can be installed inside blender via pip. Alternatively, the `setup_blender.py` script handles it as well as installing the `SequenceDataLoader` blender addon.
 
 
+
 ### Headless
 
-Just running the script with the It can be run with headlessly with:
+After cloning this repository, the addon can be installed headlessly by running:
 ```
-blender -b --python setup_blender.py -- path/to/SequenceDataLoader.zip
+zip -r SequenceDataLoader.zip SequenceDataLoader/
+blender -b --python setup_blender.py -- SequenceDataLoader.zip
 ```
 
 ### GUI
