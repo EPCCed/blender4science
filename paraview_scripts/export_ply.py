@@ -33,19 +33,19 @@ def export_ply(filename, source, displayProp):
 parser = argparse.ArgumentParser()
 
 parser.add_argument("statefile", help="ParaView Statefile to process")
-parser.add_argument("--datapath", help="Path to the solution data")
-parser.add_argument("--exportpath", default="paraview_export", help="Path to export .ply files")
+parser.add_argument("--data-path", help="Path to the solution data")
+parser.add_argument("--export-path", default="paraview_export", help="Path to export .ply files")
 
 args = parser.parse_args()
 
 state_file = args.statefile
-export_path = args.exportpath
+export_path = args.export_path
 
 print("Loading {}".format(state_file))
 kwargs = {}
-if args.datapath: 
-    print("Data directory: {}".format(args.datapath))
-    kwargs = {"data_directory": args.datapath}
+if args.data_path: 
+    print("Data directory: {}".format(args.data_path))
+    kwargs = {"data_directory": args.data_path}
 
 LoadState(state_file, **kwargs)
 print("Export path: {}".format(export_path))
