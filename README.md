@@ -13,9 +13,10 @@ This addon requires pyyaml when using yaml configuration files. It can be instal
 
 ### Headless
 
-Just running the script with the It can be run with headlessly with:
+After cloning this repository, the addon can be installed headlessly by running:
 ```
-blender -b --python setup_blender.py -- path/to/SequenceDataLoader.zip
+zip -r SequenceDataLoader.zip SequenceDataLoader/
+blender -b --python setup_blender.py -- SequenceDataLoader.zip
 ```
 
 ### GUI
@@ -25,7 +26,7 @@ pyyaml can be installed by running the following command inside blender's python
 import pip
 pip.main(['install', 'pyyaml', '--user'])
 ```
-Finally, like any addon, `SequenceDataLoader` can be installed by going in Edit>Preferences>Add-ons>Install and selecting the .zip file associated with the release
+Finally, like any addon, `SequenceDataLoader` can be installed by going in Edit>Preferences>Add-ons>Install and selecting the .zip file associated with the release.
 
 
 ## Running
