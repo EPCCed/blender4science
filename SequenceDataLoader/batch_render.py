@@ -43,13 +43,13 @@ class SequenceDataRender(bpy.types.PropertyGroup):
             return
         args = parser.parse_args(args=sys.argv[sys.argv.index("--") + 1:])
 
-        if args.configfile:
-            print(f"Loading config file at: {args.configfile}")
-            Scene.sequence_data.config_file = args.configfile
+        if args.config_file:
+            print(f"Loading config file at: {args.config_file}")
+            Scene.sequence_data.config_file = args.config_file
             Scene.sequence_data.read_config()
 
-        if args.renderpath:
-            Scene.sequence_data.export_path = args.renderpath
+        if args.render_path:
+            Scene.sequence_data.export_path = args.render_path
 
         if args.frames:
             Scene.frame_start = int(args.frames.split("-")[0])
@@ -84,4 +84,7 @@ class SequenceDataRender(bpy.types.PropertyGroup):
                 pass
 
             self.render(Scene, frame)
-            os.remove(export_path_tmp)
+            try:
+                os.remove(export_path_tmp)
+            except:
+                pass
