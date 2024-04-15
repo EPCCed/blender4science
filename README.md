@@ -1,5 +1,6 @@
 
-This repository contains a set of tools including a blender addon meant to ease the render of sequences of data stored in separate (`.ply`) files.
+This repository contains a set of tools to ease the ingestion and render of scientific data. Specifically, in includes a set of paraview scripts to generate sequences of `.ply` and `.vdb` files and a blender addon to read and interact with them. 
+Each tool and script is designed to be easily used on a headless system like a HPC.
 
 
 
