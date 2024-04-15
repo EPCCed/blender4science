@@ -62,7 +62,9 @@ The addon's settings are gathered in a single panel in the 3D viewport. In it, s
 To render frames 1 to 17 from `file.blend` the following line can be run:
 
 ```Bash
-blender -b file.blend --python-expr "import bpy; bpy.context.scene.sequence_data_render.render_frames()" -- --config-file config.yaml --render-path blender_export --frames 1-17
+blender -b file.blend --python-expr \
+"import bpy; bpy.context.scene.sequence_data_render.render_frames()" -- \
+ --config-file config.yaml --render-path blender_export --frames 1-17
 ```
 
 - Note that it will only render a frame if the image file isn't already present in the export folder. This allows to run multiple Blender instances simultaneously to speed up the renders.
@@ -86,7 +88,8 @@ This script will will load the statefile and, for every single timestep, export 
 
 usage:
 ```Bash
-pvpython export_vdb.py --data-path path/with/input/data --export-path vdb_export --sampling-bounds="0,1,-0.5,0.5,-2,2" --cell-size 0.01
+pvpython export_vdb.py --data-path path/with/input/data --export-path vdb_export \
+--sampling-bounds="0,1,-0.5,0.5,-2,2" --cell-size 0.01
 ```
 
 This script generates `.vdb` files from input data given in `--data-path`. It uses the `ResampleToImage` filter that optionally requires the bounds of the domain to be exported as well as either the cell size (`--cell-size`) or the number of cells in x,y and z (via `--sampling-dims`).
