@@ -75,7 +75,7 @@ usage:
 pvpython export_ply.py --data-path path/with/input/data --export-path ply_export statefile.pvsm
 ```
 
-This script will will load the statefile and, for every single timestep, export the visible filters to separate `.ply` files in the folder specified by `--exportpath`.
+This script will will load the statefile and, for every single timestep, export the visible filters to separate `.ply` files in the folder specified by `--export-path`.
 
 
 
