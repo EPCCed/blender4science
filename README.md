@@ -1,5 +1,5 @@
 
-This repository contains a set of tools to ease the ingestion and render of scientific data. Specifically, in includes a set of ParaView scripts to generate sequences of `.ply` and `.vdb` files and a Blender addon to read and interact with them. 
+This repository contains a set of tools to help with the ingestion and render of scientific data. Specifically, in includes a set of ParaView scripts to generate sequences of `.ply` and `.vdb` files and a Blender addon to read and interact with them. 
 Each tool and script is designed to be easily used on a headless system like a HPC.
 
 
@@ -9,7 +9,7 @@ Each tool and script is designed to be easily used on a headless system like a H
 ![Workflow](workflow.svg)
 
 
-Simulation results need to be converted and processed in formats that Blender can read. `export_ply.py` and `export_vdb.py` can be used to extract surface and volumes respectively. Because Blender doesn't handle sequence of `ply` files, `SequenceDataLoader` addon was written for that purpose. Beside managing file sequences, it also eases headless rendering by using a `.yaml` configuration file to overwrite information stored in the `.blend` file, like the resolution percentage or the number of ray traced samples.
+Simulation results need to be converted and processed in formats that Blender can read. `export_ply.py` and `export_vdb.py` can be used to extract surfaces and volumes respectively. Because Blender doesn't handle sequences of `ply` files, `SequenceDataLoader` addon was written for that purpose. Beside managing file sequences, it also eases headless rendering by using a `.yaml` configuration file to overwrite information stored in the `.blend` file, like the resolution percentage or the number of ray traced samples.
 
 
 # Blender addon
@@ -21,13 +21,12 @@ This addon handles loading sequences of `.ply` files as well as providing some q
 This addon (optionally) requires pyyaml when using yaml configuration files. It can be installed inside Blender via pip. Alternatively, the `setup_blender.py` script handles it as well as installing the `SequenceDataLoader` Blender addon.
 
 
-
 ### Headless
 
-After cloning this repository, the addon can be installed headlessly by running:
-```
-zip -r SequenceDataLoader.zip SequenceDataLoader/
-blender -b --python setup_blender.py -- SequenceDataLoader.zip
+After cloning this repository, the addon can be installed by running:
+```Bash
+$ zip -r SequenceDataLoader.zip SequenceDataLoader/
+$ blender -b --python setup_blender.py -- SequenceDataLoader.zip
 ```
 
 ### GUI
@@ -62,7 +61,7 @@ The addon's settings are gathered in a single panel in the 3D viewport. In it, s
 To render frames 1 to 17 from `file.blend` the following line can be run:
 
 ```Bash
-blender -b file.blend --python-expr \
+$ blender -b file.blend --python-expr \
 "import bpy; bpy.context.scene.sequence_data_render.render_frames()" -- \
  --config-file config.yaml --render-path blender_export --frames 1-17
 ```
@@ -77,7 +76,7 @@ blender -b file.blend --python-expr \
 
 usage:
 ```Bash
-pvpython export_ply.py --data-path path/with/input/data --export-path ply_export statefile.pvsm
+$ pvpython export_ply.py --data-path path/with/input/data --export-path ply_export statefile.pvsm
 ```
 
 This script will will load the statefile and, for every single timestep, export the visible filters to separate `.ply` files in the folder specified by `--export-path`.
@@ -88,7 +87,7 @@ This script will will load the statefile and, for every single timestep, export 
 
 usage:
 ```Bash
-pvpython export_vdb.py --data-path path/with/input/data --export-path vdb_export \
+$ pvpython export_vdb.py --data-path path/with/input/data --export-path vdb_export \
 --sampling-bounds="0,1,-0.5,0.5,-2,2" --cell-size 0.01
 ```
 
